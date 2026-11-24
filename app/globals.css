@@ -1,26 +1,145 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Design tokens. Tailwind v4 reads these from CSS, e.g. `bg-cream`, `text-ink`,
+ * `rounded-card`, `shadow-soft`, `font-serif`. Light mode only for now.
+ * All text/background pairs below meet WCAG AA (4.5:1) for body text.
+ */
+@theme {
+  /* Surfaces */
+  --color-cream: #fbf7f2; /* page background */
+  --color-sand: #f4ede4; /* subtle section background */
+  --color-surface: #ffffff; /* cards */
+  --color-line: #e9dfd4; /* borders & dividers */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Text */
+  --color-ink: #2b2623; /* headings & body (14.9:1 on cream) */
+  --color-ink-soft: #4a423d; /* secondary text (9.4:1 on cream) */
+  --color-muted: #6b625b; /* captions (5.6:1 on cream) */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Accent — a muted rose clay */
+  --color-accent: #9a4c43; /* buttons (white text 6.2:1) */
+  --color-accent-hover: #833f37;
+  --color-accent-soft: #f4e3de; /* tinted backgrounds */
+  --color-accent-ink: #7d3a32; /* accent-colored text on cream (7.6:1) */
+
+  /* Status */
+  --color-success: #2f6b4f;
+  --color-success-soft: #e3f0e8;
+  --color-warning: #8a5a12;
+  --color-warning-soft: #fbefd9;
+
+  /* Typography (variables are set by next/font in app/layout.tsx) */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  /* Radii */
+  --radius-card: 1.5rem; /* 24px */
+  --radius-soft: 1rem; /* 16px */
+
+  /* Shadows */
+  --shadow-soft: 0 1px 2px rgb(43 38 35 / 0.04), 0 8px 24px -8px rgb(43 38 35 / 0.10);
+  --shadow-lift: 0 2px 4px rgb(43 38 35 / 0.05), 0 18px 40px -12px rgb(43 38 35 / 0.18);
+
+  /* Motion */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-float: float 7s var(--ease-soft) infinite;
+  --animate-fade-up: fade-up 0.7s var(--ease-soft) both;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+  --animate-pop-in: pop-in 0.5s var(--ease-soft) both;
+  --animate-name-in: name-in 0.9s var(--ease-soft) both;
+  --animate-fade-out: fade-out 0.45s ease both;
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.4) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  @keyframes name-in {
+    from {
+      opacity: 0;
+      letter-spacing: 0.25em;
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      letter-spacing: -0.015em;
+      filter: blur(0);
+    }
+  }
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem; /* keep anchor targets clear of the sticky header */
+  }
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  ::selection {
+    background: var(--color-accent-soft);
+  }
+}
+
+/* Respect users who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
